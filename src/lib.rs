@@ -1,12 +1,48 @@
+use std::collections::HashMap;
+
 pub fn process_part_1(input: &str) -> usize {
+    let grid = Grid::new(input);
     31
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 enum Cell {
     Start,
     End,
     Height(usize),
+}
+
+#[derive(Debug, Eq, PartialEq, Hash)]
+struct Coord {
+    x: usize,
+    y: usize,
+}
+
+impl Coord {
+    pub fn get_step_directions(&self) -> [Coord; 4] {
+        [
+            Coord {
+                x: self.x,
+                y: self.y + 1,
+            },
+            Coord {
+                x: self.x + 1,
+                y: self.y,
+            },
+            Coord {
+                x: self.x,
+                y: self.y - 1,
+            },
+            Coord {
+                x: self.x - 1,
+                y: self.y,
+            },
+        ]
+    }
+
+    pub fn is_in_bounds(&self, x_dim: usize, y_dim: usize) -> bool {
+        self.x < x_dim && self.y < y_dim
+    }
 }
 
 struct Grid {
@@ -27,6 +63,37 @@ impl Grid {
             .collect::<Vec<Vec<Cell>>>();
         cols.reverse();
         Grid { cols }
+    }
+
+    fn get_start_coords(&self) -> Coord {
+        for y in 0..self.cols.len() {
+            for x in 0..self.cols[y].len() {
+                if self.cols[y][x] == Cell::Start {
+                    return Coord { y, x };
+                }
+            }
+        }
+        panic!("Failed to find starting coord");
+    }
+
+    fn get_cell(&self, coord: &Coord) -> &Cell {
+        &self.cols[coord.y][coord.x]
+    }
+
+    fn find_min_path_length() -> usize {
+        todo!()
+    }
+
+    fn take_step(&self, pos: &Coord, visited: &HashMap<Coord, usize>) -> usize {
+        if *self.get_cell(pos) == Cell::End {
+            return 1;
+        }
+
+        if visited.contains_key(&pos) {
+            return *visited.get(&pos).unwrap();
+        }
+
+        todo!()
     }
 }
 
