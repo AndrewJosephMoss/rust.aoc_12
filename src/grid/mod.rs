@@ -32,7 +32,7 @@ impl Grid {
         Grid { cols, y_dim, x_dim }
     }
 
-    fn get_start_coords(&self) -> Coord {
+    pub fn get_start_coords(&self) -> Coord {
         for y in 0..self.cols.len() {
             for x in 0..self.cols[y].len() {
                 if self.cols[y][x] == Cell::Start {
@@ -43,7 +43,7 @@ impl Grid {
         panic!("Failed to find starting coord");
     }
 
-    fn get_end_coords(&self) -> Coord {
+    pub fn get_end_coords(&self) -> Coord {
         for y in 0..self.cols.len() {
             for x in 0..self.cols[y].len() {
                 if self.cols[y][x] == Cell::End {
@@ -54,11 +54,11 @@ impl Grid {
         panic!("Failed to find starting coord");
     }
 
-    fn get_cell(&self, coord: &Coord) -> &Cell {
+    pub fn get_cell(&self, coord: &Coord) -> &Cell {
         &self.cols[coord.y][coord.x]
     }
 
-    fn get_cell_height(&self, coord: &Coord) -> usize {
+    pub fn get_cell_height(&self, coord: &Coord) -> usize {
         let pos_cell = self.get_cell(coord);
         match pos_cell {
             Cell::Start => 1,
