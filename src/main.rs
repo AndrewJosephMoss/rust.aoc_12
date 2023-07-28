@@ -1,4 +1,8 @@
 use aoc_12;
+use std::fs;
+
 fn main() {
-    println!("Hello, world!");
+    part1();
 }
+
+fn part1() {}
