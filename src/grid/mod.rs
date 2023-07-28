@@ -89,12 +89,12 @@ impl Grid {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::fs;
+
+    const TEST_INPUT: &str = include_str!("../../test-input.txt");
 
     #[test]
     fn test_create_grid() {
-        let input = fs::read_to_string("test-input.txt").unwrap();
-        let grid = Grid::new(&input);
+        let grid = Grid::new(TEST_INPUT);
         assert_eq!(grid.cols[0][0], Cell::Height(1));
         assert_eq!(grid.cols[4][0], Cell::Start);
         assert_eq!(grid.cols[2][5], Cell::End);
@@ -103,22 +103,38 @@ mod tests {
 
     #[test]
     fn test_get_cell_height() {
-        todo!()
+        let grid = Grid::new(TEST_INPUT);
+
+        let coord = Coord { x: 0, y: 4 };
+        let height = grid.get_cell_height(&coord);
+        assert_eq!(height, 1);
     }
 
     #[test]
     fn test_get_start_coord() {
-        todo!()
+        let grid = Grid::new(TEST_INPUT);
+        let start = grid.get_start_coords();
+        assert_eq!(start, Coord { x: 0, y: 4 });
     }
 
     #[test]
     fn test_get_end_coord() {
-        todo!()
+        let grid = Grid::new(TEST_INPUT);
+        let end = grid.get_end_coords();
+        assert_eq!(end, Coord { x: 5, y: 2 });
     }
 
     #[test]
-    fn get_coord() {
-        todo!()
+    fn get_cell() {
+        let grid = Grid::new(TEST_INPUT);
+        let cell = grid.get_cell(&Coord { x: 0, y: 3 });
+        assert_eq!(*cell, Cell::Height(1));
+
+        let cell = grid.get_cell(&Coord { x: 2, y: 2 });
+        assert_eq!(*cell, Cell::Height(3));
+
+        let cell = grid.get_cell(&Coord { x: 5, y: 3 });
+        assert_eq!(*cell, Cell::Height(24));
     }
 
     #[test]
