@@ -10,8 +10,8 @@ pub enum Cell {
 
 pub struct Grid {
     cols: Vec<Vec<Cell>>,
-    x_dim: usize,
-    y_dim: usize,
+    pub x_dim: usize,
+    pub y_dim: usize,
 }
 
 impl Grid {
