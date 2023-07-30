@@ -1,5 +1,5 @@
 use std::fmt::{self, Display};
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy, Hash, Eq)]
 pub struct Coord {
     pub x: usize,
     pub y: usize,

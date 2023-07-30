@@ -84,6 +84,24 @@ impl Grid {
             _ => None,
         }
     }
+
+    fn get_all_cells_of_height_a(&self) -> Vec<Coord> {
+        let mut coords = Vec::<Coord>::new();
+        for y in 0..self.cols.len() {
+            for x in 0..self.cols[y].len() {
+                match self.cols[y][x] {
+                    Cell::Start => coords.push(Coord { x, y }),
+                    Cell::Height(height) => {
+                        if height == 1 {
+                            coords.push(Coord { x, y });
+                        }
+                    }
+                    _ => (),
+                }
+            }
+        }
+        coords
+    }
 }
 
 #[cfg(test)]

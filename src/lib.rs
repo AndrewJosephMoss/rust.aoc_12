@@ -1,40 +1,48 @@
 pub mod grid;
 
-use std::borrow::BorrowMut;
-
-use ego_tree::{NodeId, NodeMut, NodeRef, Tree};
+use std::collections::HashSet;
 
 use crate::grid::coord::Coord;
 use crate::grid::Grid;
 
 pub fn process_part_1(input: &str) -> usize {
     let grid = grid::Grid::new(input);
-    31
-}
+    let start_pos = grid.get_start_coords();
+    let end_pos = grid.get_end_coords();
+    let mut visited = HashSet::from([start_pos]);
 
-fn get_routes(grid: &Grid) {
-    let start = grid.get_start_coords();
-    let mut routes = Tree::<Coord>::new(start.clone());
-    let root = routes.root();
-    let root_id = root.id();
-    if traverse_grid(&start, grid, &mut routes, root_id) {
-        println!("{routes:?}");
-    } else {
-        println!("No route found through grid");
+    let mut curr_coords = vec![start_pos];
+    let mut step_coords = Vec::<Coord>::new();
+
+    let mut iteration: usize = 0;
+    let mut reached_end = false;
+
+    while !reached_end {
+        iteration += 1;
+        for coord in &curr_coords {
+            let steps = get_step_dirs(&coord, &grid, &visited);
+            if steps.contains(&end_pos) {
+                reached_end = true;
+                break;
+            }
+            steps.iter().for_each(|s| {
+                visited.insert(s.clone());
+                step_coords.push(*s);
+            });
+        }
+        curr_coords = step_coords.clone();
+        step_coords = Vec::<Coord>::new();
     }
+    iteration
 }
 
-fn traverse_grid(pos: &Coord, grid: &Grid, routes: &mut Tree<Coord>, id: NodeId) -> bool {
-    todo!()
-}
-
-fn get_step_dirs(pos: &Coord, grid: &Grid, routes: &mut Tree<Coord>, id: NodeId) -> Vec<Coord> {
-    let mut step_dirs = pos.get_step_directions();
-    let mut step_dirs = step_dirs
+fn get_step_dirs(pos: &Coord, grid: &Grid, visited: &HashSet<Coord>) -> Vec<Coord> {
+    let step_dirs = pos.get_step_directions();
+    let step_dirs = step_dirs
         .into_iter()
         .filter(|s| s.is_in_bounds(grid.x_dim, grid.y_dim))
         .filter(|s| can_take_step(pos, &s, grid))
-        .filter(|s| !is_in_route(s, routes, id))
+        .filter(|s| !visited.contains(s))
         .collect::<Vec<Coord>>();
     step_dirs
 }
@@ -43,24 +51,6 @@ fn can_take_step(pos: &Coord, dest: &Coord, grid: &Grid) -> bool {
     let pos_h = grid.get_cell_height(pos);
     let dest_h = grid.get_cell_height(dest);
     pos_h >= dest_h || dest_h == pos_h + 1
-}
-
-fn is_in_route(pos: &Coord, routes: &mut Tree<Coord>, id: NodeId) -> bool {
-    let mut node = routes
-        .get(id)
-        .expect(&format!("No node found at id: {id:?}"));
-
-    if node.value() == pos {
-        return true;
-    }
-
-    while let Some(parent) = node.parent() {
-        if parent.value() == pos {
-            return true;
-        }
-        node = parent;
-    }
-    return false;
 }
 
 #[cfg(test)]
@@ -73,43 +63,5 @@ mod tests {
     fn test_process_part_1() {
         let result = process_part_1(TEST_INPUT);
         assert_eq!(result, 31);
-    }
-
-    #[test]
-    fn test_is_in_route() {
-        let mut routes = Tree::<Coord>::new(Coord { x: 2, y: 2 });
-        let start = routes.root_mut();
-        let start_id = start.id();
-
-        let is_in = is_in_route(&Coord { x: 2, y: 2 }, &mut routes, start_id);
-        assert!(is_in);
-
-        let mut start = routes.get_mut(start_id).unwrap();
-        let node = start.append(Coord { x: 3, y: 3 });
-        let node_id = node.id();
-
-        let is_in = is_in_route(&Coord { x: 3, y: 3 }, &mut routes, node_id);
-        assert!(is_in);
-        let is_in = is_in_route(&Coord { x: 2, y: 2 }, &mut routes, node_id);
-        assert!(is_in);
-        let is_in = is_in_route(&Coord { x: 3, y: 3 }, &mut routes, start_id);
-        assert!(!is_in);
-
-        let mut node = routes.get_mut(node_id).unwrap();
-        let node2 = node.append(Coord { x: 4, y: 4 });
-        let node2_id = node2.id();
-
-        let is_in = is_in_route(&Coord { x: 4, y: 4 }, &mut routes, node2_id);
-        assert!(is_in);
-        let is_in = is_in_route(&Coord { x: 3, y: 3 }, &mut routes, node2_id);
-        assert!(is_in);
-        let is_in = is_in_route(&Coord { x: 4, y: 4 }, &mut routes, node_id);
-        assert!(!is_in);
-    }
-
-    #[test]
-    fn test_get_routes() {
-        // let grid = Grid::new(TEST_INPUT);
-        // get_routes(&grid);
     }
 }
