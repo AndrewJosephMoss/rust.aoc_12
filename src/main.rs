@@ -14,6 +14,6 @@ fn part1() {
 
 fn part2() {
     let input = fs::read_to_string("input.txt").unwrap();
-    let steps = aoc_12::process_part_2(&input).unwrap();
+    let steps = aoc_12::process_part_2(&input);
     println!("Part 2: {steps}");
 }
