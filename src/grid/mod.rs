@@ -85,7 +85,7 @@ impl Grid {
         }
     }
 
-    fn get_all_cells_of_height_a(&self) -> Vec<Coord> {
+    pub fn get_all_cells_of_height_a(&self) -> Vec<Coord> {
         let mut coords = Vec::<Coord>::new();
         for y in 0..self.cols.len() {
             for x in 0..self.cols[y].len() {

@@ -9,9 +9,26 @@ pub fn process_part_1(input: &str) -> usize {
     let grid = grid::Grid::new(input);
     let start_pos = grid.get_start_coords();
     let end_pos = grid.get_end_coords();
-    let mut visited = HashSet::from([start_pos]);
 
-    let mut curr_coords = vec![start_pos];
+    let steps = get_steps_to_end(&start_pos, &end_pos, &grid);
+    steps
+}
+
+pub fn process_part_2(input: &str) -> Option<usize> {
+    let grid = Grid::new(input);
+    let end_pos = grid.get_end_coords();
+    let a_height_cells = grid.get_all_cells_of_height_a();
+    let min_steps = a_height_cells
+        .iter()
+        .map(|c| get_steps_to_end(&c, &end_pos, &grid))
+        .min();
+    min_steps
+}
+
+fn get_steps_to_end(start_pos: &Coord, end_pos: &Coord, grid: &Grid) -> usize {
+    let mut visited = HashSet::from([*start_pos]);
+
+    let mut curr_coords = vec![*start_pos];
     let mut step_coords = Vec::<Coord>::new();
 
     let mut iteration: usize = 0;
@@ -63,5 +80,11 @@ mod tests {
     fn test_process_part_1() {
         let result = process_part_1(TEST_INPUT);
         assert_eq!(result, 31);
+    }
+
+    #[test]
+    fn test_process_part_2() {
+        let result = process_part_2(TEST_INPUT).unwrap();
+        assert_eq!(result, 29);
     }
 }
